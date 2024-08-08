@@ -21,7 +21,7 @@ use super::komorebi::KomorebiProvider;
 use super::{
   battery::BatteryProvider, config::ProviderConfig, cpu::CpuProvider,
   host::HostProvider, ip::IpProvider, memory::MemoryProvider,
-  network::NetworkProvider, variables::ProviderVariables,
+  network::NetworkProvider, shell:ShellProvider, variables::ProviderVariables,
   weather::WeatherProvider,
 };
 use crate::providers::provider::Provider;
@@ -216,6 +216,9 @@ fn create_provider(
     }
     ProviderConfig::Network(config) => {
       Box::new(NetworkProvider::new(config, netinfo))
+    }
+    ProviderConfig::Shell(config) => {
+      Box::new(ShellProvider::new(config))
     }
     ProviderConfig::Weather(config) => {
       Box::new(WeatherProvider::new(config))
