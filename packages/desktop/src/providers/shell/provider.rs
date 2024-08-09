@@ -1,10 +1,10 @@
-use std::sync::Arc;
+use std::{process::Command, sync::Arc};
 
 use async_trait::async_trait;
 use sysinfo::System;
 use tokio::{sync::Mutex, task::AbortHandle};
 
-use super::{ShellProviderConfig, HostVariables};
+use super::{ShellProviderConfig, ShellVariables};
 use crate::providers::{
   interval_provider::IntervalProvider, variables::ProviderVariables,
 };
@@ -12,18 +12,18 @@ use crate::providers::{
 pub struct ShellProvider {
   pub config: Arc<ShellProviderConfig>,
   abort_handle: Option<AbortHandle>,
-  sysinfo: Arc<Mutex<System>>,
+  // cmd: Arc<Command>,
 }
 
 impl ShellProvider {
-  pub fn new(
-    config: ShellProviderConfig,
-    sysinfo: Arc<Mutex<System>>,
-  ) -> ShellProvider {
+  pub fn new(config: ShellProviderConfig) -> ShellProvider {
+    // let mut cmd = Command::new(&config.command);
+    // cmd.args(&config.args);
+
     ShellProvider {
       config: Arc::new(config),
       abort_handle: None,
-      sysinfo,
+      // cmd: cmd.into(),
     }
   }
 }
@@ -38,7 +38,8 @@ impl IntervalProvider for ShellProvider {
   }
 
   fn state(&self) -> Arc<Mutex<System>> {
-    self.sysinfo.clone()
+    // self.cmd.clone()
+    unimplemented!()
   }
 
   fn abort_handle(&self) -> &Option<AbortHandle> {
@@ -50,16 +51,19 @@ impl IntervalProvider for ShellProvider {
   }
 
   async fn get_refreshed_variables(
-    _: &ShellProviderConfig,
+    config: &ShellProviderConfig,
     __: &Mutex<System>,
   ) -> anyhow::Result<ProviderVariables> {
-    Ok(ProviderVariables::Host(HostVariables {
-      hostname: System::host_name(),
-      os_name: System::name(),
-      os_version: System::os_version(),
-      friendly_os_version: System::long_os_version(),
-      boot_time: System::boot_time() * 1000,
-      uptime: System::uptime() * 1000,
+    let mut command = Command::new(&config.command);
+    command.args(&config.args);
+
+    println!("Executing command: {:?}", &config.command);
+    println!("Executing args: {:?}", &config.args);
+
+    let output = command.output().expect("failed to execute command.");
+
+    Ok(ProviderVariables::Shell(ShellVariables {
+      response: Some(String::from_utf8_lossy(&output.stdout).to_string()),
     }))
   }
 }

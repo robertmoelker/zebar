@@ -6,8 +6,7 @@ use super::{
   battery::BatteryProviderConfig, cpu::CpuProviderConfig,
   host::HostProviderConfig, ip::IpProviderConfig,
   memory::MemoryProviderConfig, network::NetworkProviderConfig,
-  shell::ShellProviderConfig,
-  weather::WeatherProviderConfig,
+  shell::ShellProviderConfig, weather::WeatherProviderConfig,
 };
 
 #[derive(Deserialize, Debug)]

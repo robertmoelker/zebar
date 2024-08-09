@@ -18,6 +18,9 @@ pub fn read_file(
     None => default_config_path,
   };
 
+  // print new config path
+  println!("config path: {:?}", config_path);
+
   // Create new config file from sample if it doesn't exist.
   if !config_path.exists() {
     create_from_sample(&config_path, app_handle)?;

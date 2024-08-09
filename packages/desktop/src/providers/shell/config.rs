@@ -6,6 +6,8 @@ use crate::impl_interval_config;
 #[serde(tag = "type", rename = "shell")]
 pub struct ShellProviderConfig {
   pub refresh_interval: u64,
+  pub command: String,
+  pub args: Vec<String>,
 }
 
 impl_interval_config!(ShellProviderConfig);

@@ -10,5 +10,6 @@ pub mod manager;
 pub mod memory;
 pub mod network;
 pub mod provider;
+pub mod shell;
 pub mod variables;
 pub mod weather;

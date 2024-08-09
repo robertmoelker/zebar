@@ -4,19 +4,22 @@ import type { ShellProviderConfig } from '~/user-config';
 import { createProviderListener } from '../create-provider-listener';
 
 export interface ShellVariables {
-  any: any;
+  response: string;
 }
 
 export async function createShellProvider(
   config: ShellProviderConfig,
   owner: Owner,
 ) {
-  const memoryVariables = await createProviderListener<
+  const shellVariables = await createProviderListener<
     ShellProviderConfig,
     ShellVariables
   >(config, owner);
 
   return {
+    get response() {
+      return shellVariables().response;
+    },
     // get usage() {
     //   return memoryVariables().usage;
     // },
